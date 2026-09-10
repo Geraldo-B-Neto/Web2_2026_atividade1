@@ -12,8 +12,9 @@
     />
   </head>
   <body>
-    <div class="container">
-      <h1>Listagem de Produto</h1>
+     <div class="container pt-5">
+      <a th:href="@{/paciente/create}">Cadastrar Paciente</a>
+      <h1>Listagem de Paciente</h1>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -21,14 +22,22 @@
             <th scope="col">Descrição</th>
             <th scope="col">Preço</th>
             <th scope="col">Estoque</th>
+            <th scope="col">Excluir</th>
+            <th scope="col">Editar</th>
           </tr>
         </thead>
         <tbody>
-          <tr th:each="product : ${productsList}">
-            <td scope="row" th:text="${product.name}"></td>
-            <td scope="row" th:text="${product.description}"></td>
-            <td scope="row" th:text="${product.price}"></td>
-            <td scope="row" th:text="${product.stock}"></td>
+          <tr th:each="paciente : ${pacientesList}">
+            <td scope="row" th:text="${paciente.name}"></td>
+            <td scope="row" th:text="${paciente.description}"></td>
+            <td scope="row" th:text="${paciente.price}"></td>
+            <td scope="row" th:text="${paciente.stock}"></td>
+            <td scope="row">
+              <a th:href="@{/paciente/delete/{id}(id=${paciente.id})}" class="btn btn-danger">Deletar</a>
+            </td>
+             <td>
+              <a th:href="@{/paciente/edit/{id}(id=${paciente.id})}">Editar</a>
+            </td>
           </tr>
         </tbody>
       </table>
