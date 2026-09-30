@@ -29,9 +29,13 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/home", "/register", "/saveUser", "/accessDenied").permitAll()
+                .requestMatchers("/paciente/create", "/paciente/edit/**", "/paciente/delete/**")
+                .hasAnyAuthority("Admin", "ROLE_ADMIN")
+                .requestMatchers("/paciente/save", "/paciente/update/**")
+                .hasAnyAuthority("Admin", "ROLE_ADMIN")
                 .anyRequest().authenticated())
                 .formLogin(login -> login
-                        .defaultSuccessUrl("/paciente", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")))

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <th:block th:replace="~{Fragments/head :: head('Listar Paciente')}"></th:block>
   <body>
     <th:block th:replace="~{Fragments/head :: header}"></th:block>
@@ -12,8 +12,8 @@
             <th scope="col">Descrição</th>
             <th scope="col">Preço</th>
             <th scope="col">Estoque</th>
-            <th scope="col">Editar</th>
-            <th scope="col">Excluir</th>
+            <th sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')" scope="col">Editar</th>
+            <th sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')" scope="col">Excluir</th>
           </tr>
         </thead>
         <tbody>
@@ -22,10 +22,10 @@
             <td scope="row" th:text="${paciente.description}"></td>
             <td scope="row" th:text="${paciente.price}"></td>
             <td scope="row" th:text="${paciente.stock}"></td>
-            <td scope="row">
+            <td sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')" scope="row">
               <a th:href="@{/paciente/edit/{id}(id=${paciente.id})}">Editar</a>
             </td>
-            <td>
+            <td sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')">
               <a th:href="@{/paciente/delete/{id}(id=${paciente.id})}">Deletar</a>
             </td>
           </tr>
@@ -33,7 +33,7 @@
       </table>
 
       <div class="row">
-        <a th:href="@{/paciente/create}">
+        <a sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')" th:href="@{/paciente/create}">
           <button class="btn btn-primary">Cadastrar Paciente</button>
         </a>
       </div>

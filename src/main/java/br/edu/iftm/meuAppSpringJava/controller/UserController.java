@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 import br.edu.iftm.meuAppSpringJava.model.User;
 import br.edu.iftm.meuAppSpringJava.service.IUserService;
 
@@ -28,6 +30,7 @@ public class UserController {
     public String saveUser(
             @ModelAttribute User user,
             Model model) {
+        user.setRoles(List.of("ROLE_USER"));
         Integer id = userService.saveUser(user);
         String message = "User '" + id + "' saved successfully !";
         model.addAttribute("msg", message);

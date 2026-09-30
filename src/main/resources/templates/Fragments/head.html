@@ -28,6 +28,7 @@
 
 <nav
   th:fragment="header()"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
   class="container-fluid navbar navbar-expand-lg navbar-dark bg-dark"
 >
   <div class="container">
@@ -59,12 +60,16 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" th:href="@{/paciente}">Listar</a>
-            <a class="dropdown-item" th:href="@{/paciente/create}">Cadastrar</a>
+            <a sec:authorize="hasAnyAuthority('Admin', 'ROLE_ADMIN')" class="dropdown-item" th:href="@{/paciente/create}">Cadastrar</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">Algo mais</a>
           </div>
         </li>
       </ul>
+      <form class="form-inline my-2 my-lg-0" action="/logout" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="btn btn-block d-lg-inline-block my-2 my-sm-0">Sair</button>
+      </form>
     </div>
   </div>
 </nav>
