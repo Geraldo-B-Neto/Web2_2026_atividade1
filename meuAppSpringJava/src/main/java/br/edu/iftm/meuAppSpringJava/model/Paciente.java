@@ -1,6 +1,8 @@
 package br.edu.iftm.meuAppSpringJava.model;
 
+import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,37 +10,41 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "paciente")
+@Table(name = "pacientes")
 public class Paciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    @NotBlank(message = "Nome é um campo obrigatório")
-    @Size(min = 3, max = 50, message = "Nome deve conter entre 3 e 50 caracteres")
-    private String name;
+    @NotBlank(message = "Informe o nome do paciente")
+    @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")
+    @Column(nullable = false, length = 100)
+    private String nome;
 
-    @Column(name = "description")
-    private String description;
+    @NotNull(message = "Informe a data de nascimento")
+    @Past(message = "A data de nascimento deve estar no passado")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Column(name = "data_nascimento", nullable = false)
+    private LocalDate dataNascimento;
 
-    @Column(name = "price", nullable = false)
-    @NotNull(message = "Informe um preço válido")
-    @DecimalMin(value = "0.0", message = "O preço não pode ser negativo")
-    private Float price;
+    @NotBlank(message = "Informe o telefone")
+    @Size(max = 30, message = "O telefone deve ter no máximo 30 caracteres")
+    @Column(nullable = false, length = 30)
+    private String telefone;
 
-    @Column(name = "stock", nullable = false)
-    @NotNull(message = "Informe uma quantidade em estoque")
-    @Min(value = 0, message = "O estoque não pode ser negativo")
-    private Integer stock;
+    @NotBlank(message = "Informe o e-mail")
+    @Email(message = "Informe um e-mail válido")
+    @Size(max = 120, message = "O e-mail deve ter no máximo 120 caracteres")
+    @Column(nullable = false, unique = true, length = 120)
+    private String email;
 
     public Long getId() {
         return id;
@@ -48,35 +54,35 @@ public class Paciente {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getDescription() {
-        return description;
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
-    public Float getPrice() {
-        return price;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
-    public Integer getStock() {
-        return stock;
+    public String getEmail() {
+        return email;
     }
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

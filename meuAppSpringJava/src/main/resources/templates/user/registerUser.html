@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <th:block th:replace="~{fragments/head :: head('Criar conta')}"></th:block>
+  <body>
+    <main class="container mt-5" style="max-width: 520px">
+      <h1 class="h3 mb-4">Criar conta</h1>
+      <form th:action="@{/saveUser}" th:object="${user}" method="post">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input id="name" type="text" th:field="*{name}" class="form-control" autocomplete="name" required>
+          <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></small>
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" th:field="*{email}" class="form-control" autocomplete="email" required>
+          <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></small>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input id="password" type="password" th:field="*{password}" class="form-control" autocomplete="new-password" minlength="8" required>
+          <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></small>
+        </div>
+        <button type="submit" class="btn btn-primary">Criar conta</button>
+        <a th:href="@{/login}" class="btn btn-link">Já tenho uma conta</a>
+      </form>
+    </main>
+  </body>
+</html>

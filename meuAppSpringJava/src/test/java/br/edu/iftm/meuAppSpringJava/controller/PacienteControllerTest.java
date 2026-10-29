@@ -23,10 +23,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(pacienteController.class)
 @Import({ TestConfig.class, SecurityConfig.class })
+@WithMockUser
 class PacienteControllerTest {
 
     @Autowired
@@ -61,9 +63,10 @@ class PacienteControllerTest {
     @Test
     void saveReturnsFormWhenValidationFails() throws Exception {
         mockMvc.perform(post("/paciente/save").with(csrf())
-                        .param("name", "")
-                        .param("price", "12.50")
-                        .param("stock", "4"))
+                        .param("nome", "")
+                        .param("dataNascimento", "2000-01-01")
+                        .param("telefone", "555-1234")
+                        .param("email", "paciente@example.com"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("paciente/create"))
                 .andExpect(model().attributeHasErrors("paciente"));
@@ -74,10 +77,10 @@ class PacienteControllerTest {
     @Test
     void saveValidPacienteRedirectsToList() throws Exception {
         mockMvc.perform(post("/paciente/save").with(csrf())
-                        .param("name", "Paciente A")
-                        .param("description", "Descricao")
-                        .param("price", "65.24")
-                        .param("stock", "12"))
+                        .param("nome", "Paciente A")
+                        .param("dataNascimento", "2000-01-01")
+                        .param("telefone", "555-1234")
+                        .param("email", "paciente@example.com"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/paciente"));
 

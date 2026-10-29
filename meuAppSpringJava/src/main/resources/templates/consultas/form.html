@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{fragments/head :: head('Consulta')}"></th:block>
+<body>
+  <th:block th:replace="~{fragments/head :: header}"></th:block>
+  <main class="container mt-4">
+    <h1 th:text="${consulta.id == null ? 'Agendar consulta' : 'Editar consulta'}"></h1>
+    <form th:action="${consulta.id == null} ? @{/consultas/save} : @{/consultas/update/{id}(id=${consulta.id})}"
+          th:object="${consulta}" method="post">
+      <p th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}"
+         th:text="${error}" class="text-danger"></p>
+      <input type="hidden" th:field="*{id}">
+      <div class="form-group">
+        <label for="paciente">Paciente</label>
+        <select id="paciente" th:field="*{paciente.id}" class="form-control">
+          <option value="">Selecione um paciente</option>
+          <option th:each="paciente : ${pacientes}" th:value="${paciente.id}" th:text="${paciente.nome}"></option>
+        </select>
+        <small th:if="${#fields.hasErrors('paciente')}" th:errors="*{paciente}" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="dataHora">Data e horário</label>
+        <input id="dataHora" type="datetime-local" th:field="*{dataHora}" class="form-control">
+        <small th:if="${#fields.hasErrors('dataHora')}" th:errors="*{dataHora}" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="motivo">Motivo</label>
+        <input id="motivo" type="text" th:field="*{motivo}" class="form-control" maxlength="200">
+        <small th:if="${#fields.hasErrors('motivo')}" th:errors="*{motivo}" class="text-danger"></small>
+      </div>
+      <div class="form-group">
+        <label for="observacoes">Observações</label>
+        <textarea id="observacoes" th:field="*{observacoes}" class="form-control" rows="4" maxlength="2000"></textarea>
+        <small th:if="${#fields.hasErrors('observacoes')}" th:errors="*{observacoes}" class="text-danger"></small>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="valor">Valor</label>
+          <input id="valor" type="number" th:field="*{valor}" class="form-control" min="0" step="0.01">
+          <small th:if="${#fields.hasErrors('valor')}" th:errors="*{valor}" class="text-danger"></small>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="status">Status</label>
+          <select id="status" th:field="*{status}" class="form-control">
+            <option value="AGENDADA">Agendada</option>
+            <option value="CONFIRMADA">Confirmada</option>
+            <option value="CONCLUIDA">Concluída</option>
+            <option value="CANCELADA">Cancelada</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar consulta</button>
+      <a th:href="@{/consultas}" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+  </main>
+</body>
+</html>
