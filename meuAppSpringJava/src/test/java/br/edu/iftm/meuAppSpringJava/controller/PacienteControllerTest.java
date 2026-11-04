@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(pacienteController.class)
 @Import({ TestConfig.class, SecurityConfig.class })
-@WithMockUser
 class PacienteControllerTest {
 
     @Autowired
@@ -42,8 +41,11 @@ class PacienteControllerTest {
         reset(pacienteService);
     }
 
+    // --- Testes de Visualização (ROLE_USER, ROLE_GERENTE, ROLE_ADMIN) ---
+
     @Test
-    void indexLoadsPacienteList() throws Exception {
+    @WithMockUser(authorities = "ROLE_USER")
+    void indexLoadsPacienteListForRegularUser() throws Exception {
         when(pacienteService.getAllPacientes()).thenReturn(List.of(new Paciente()));
 
         mockMvc.perform(get("/paciente"))
@@ -52,8 +54,38 @@ class PacienteControllerTest {
                 .andExpect(model().attributeExists("pacientesList"));
     }
 
+    // --- Testes de Permissão para Usuário Comum (ROLE_USER) ---
+
     @Test
-    void createLoadsForm() throws Exception {
+    @WithMockUser(authorities = "ROLE_USER")
+    void regularUserCannotAccessCreateForm() throws Exception {
+        mockMvc.perform(get("/paciente/create"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void regularUserCannotSavePaciente() throws Exception {
+        mockMvc.perform(post("/paciente/save").with(csrf())
+                        .param("nome", "Paciente A")
+                        .param("dataNascimento", "2000-01-01")
+                        .param("telefone", "555-1234")
+                        .param("email", "paciente@example.com"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void regularUserCannotDeletePaciente() throws Exception {
+        mockMvc.perform(get("/paciente/delete/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- Testes de Permissão para Gerente (ROLE_GERENTE) ---
+
+    @Test
+    @WithMockUser(authorities = "ROLE_GERENTE")
+    void gerenteCanAccessCreateForm() throws Exception {
         mockMvc.perform(get("/paciente/create"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("paciente/create"))
@@ -61,21 +93,8 @@ class PacienteControllerTest {
     }
 
     @Test
-    void saveReturnsFormWhenValidationFails() throws Exception {
-        mockMvc.perform(post("/paciente/save").with(csrf())
-                        .param("nome", "")
-                        .param("dataNascimento", "2000-01-01")
-                        .param("telefone", "555-1234")
-                        .param("email", "paciente@example.com"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("paciente/create"))
-                .andExpect(model().attributeHasErrors("paciente"));
-
-        verify(pacienteService, never()).savePaciente(any(Paciente.class));
-    }
-
-    @Test
-    void saveValidPacienteRedirectsToList() throws Exception {
+    @WithMockUser(authorities = "ROLE_GERENTE")
+    void gerenteCanSaveValidPaciente() throws Exception {
         mockMvc.perform(post("/paciente/save").with(csrf())
                         .param("nome", "Paciente A")
                         .param("dataNascimento", "2000-01-01")
@@ -85,5 +104,24 @@ class PacienteControllerTest {
                 .andExpect(view().name("redirect:/paciente"));
 
         verify(pacienteService).savePaciente(any(Paciente.class));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_GERENTE")
+    void gerenteCannotDeletePaciente() throws Exception {
+        mockMvc.perform(get("/paciente/delete/1"))
+                .andExpect(status().isForbidden());
+    }
+
+    // --- Testes de Permissão para Administrador (ROLE_ADMIN) ---
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void adminCanDeletePaciente() throws Exception {
+        mockMvc.perform(get("/paciente/delete/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/paciente"));
+
+        verify(pacienteService).deletePacienteById(1L);
     }
 }

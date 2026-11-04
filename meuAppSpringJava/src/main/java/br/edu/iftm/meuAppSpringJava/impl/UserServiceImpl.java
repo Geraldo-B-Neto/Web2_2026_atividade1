@@ -35,7 +35,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Novos usuários cadastrados pelo formulário recebem ROLE_USER
         user.setRoles(List.of("ROLE_USER"));
+        userRepository.save(user);
+    }
+
+    /**
+     * Cria um usuário com roles específicas (usado pelo DataInitializer).
+     */
+    @Transactional
+    public void registerWithRoles(String name, String email, String password, List<String> roles) {
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        if (userRepository.existsByEmail(normalizedEmail)) {
+            return; // Já existe, não recria
+        }
+        User user = new User();
+        user.setName(name);
+        user.setEmail(normalizedEmail);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(roles);
         userRepository.save(user);
     }
 
@@ -43,7 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email.trim().toLowerCase(Locale.ROOT))
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),

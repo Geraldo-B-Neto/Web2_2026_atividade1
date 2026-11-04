@@ -5,6 +5,7 @@ import br.edu.iftm.meuAppSpringJava.service.ConsultaService;
 import br.edu.iftm.meuAppSpringJava.service.pacienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,12 +29,14 @@ public class ConsultaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_GERENTE', 'ROLE_ADMIN')")
     public String index(Model model) {
         model.addAttribute("consultas", consultaService.getAllConsultas());
         return "consultas/index";
     }
 
     @GetMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ROLE_GERENTE', 'ROLE_ADMIN')")
     public String create(Model model) {
         model.addAttribute("consulta", new Consulta());
         addPacientes(model);
@@ -41,6 +44,7 @@ public class ConsultaController {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasAnyAuthority('ROLE_GERENTE', 'ROLE_ADMIN')")
     public String save(@ModelAttribute("consulta") @Valid Consulta consulta, BindingResult result, Model model) {
         if (result.hasErrors()) {
             addPacientes(model);
@@ -58,6 +62,7 @@ public class ConsultaController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_GERENTE', 'ROLE_ADMIN')")
     public String edit(@PathVariable Long id, Model model) {
         Consulta consulta = consultaService.getConsultaById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Consulta não encontrada"));
@@ -67,6 +72,7 @@ public class ConsultaController {
     }
 
     @PostMapping("/update/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_GERENTE', 'ROLE_ADMIN')")
     public String update(@PathVariable Long id, @ModelAttribute("consulta") @Valid Consulta consulta,
             BindingResult result, Model model) {
         consulta.setId(id);
@@ -86,6 +92,7 @@ public class ConsultaController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String delete(@PathVariable Long id) {
         consultaService.deleteConsultaById(id);
         return "redirect:/consultas";

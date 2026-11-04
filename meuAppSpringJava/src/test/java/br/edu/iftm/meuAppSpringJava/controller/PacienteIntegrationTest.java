@@ -33,7 +33,7 @@ class PacienteIntegrationTest {
     private ConsultaRepository consultaRepository;
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void savePacientePersistsToDatabase() throws Exception {
         mockMvc.perform(post("/paciente/save").with(csrf())
                 .param("nome", "Paciente A")

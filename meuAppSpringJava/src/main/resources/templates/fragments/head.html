@@ -46,41 +46,47 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
+
+        <!-- Menu Pacientes -->
         <li class="nav-item dropdown active">
-          <a
-            class="nav-link dropdown-toggle"
-            th:href="@{/paciente}"
-            id="navbarDropdown"
-            role="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
+          <a class="nav-link dropdown-toggle" href="#"
+             id="dropdownPaciente" role="button"
+             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Pacientes
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu" aria-labelledby="dropdownPaciente">
             <a class="dropdown-item" th:href="@{/paciente}">Listar pacientes</a>
-            <a class="dropdown-item" th:href="@{/paciente/create}">Cadastrar paciente</a>
+            <!-- Cadastrar: apenas GERENTE e ADMIN -->
+            <a sec:authorize="hasAnyAuthority('ROLE_GERENTE','ROLE_ADMIN')"
+               class="dropdown-item" th:href="@{/paciente/create}">Cadastrar paciente</a>
           </div>
         </li>
+
+        <!-- Menu Consultas -->
         <li class="nav-item dropdown active">
-          <a
-            class="nav-link dropdown-toggle"
-            th:href="@{/consultas}"
-            id="navbarDropdown"
-            role="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
+          <a class="nav-link dropdown-toggle" href="#"
+             id="dropdownConsulta" role="button"
+             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Consultas
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu" aria-labelledby="dropdownConsulta">
             <a class="dropdown-item" th:href="@{/consultas}">Listar consultas</a>
-            <a class="dropdown-item" th:href="@{/consultas/create}">Agendar consulta</a>
+            <!-- Agendar: apenas GERENTE e ADMIN -->
+            <a sec:authorize="hasAnyAuthority('ROLE_GERENTE','ROLE_ADMIN')"
+               class="dropdown-item" th:href="@{/consultas/create}">Agendar consulta</a>
           </div>
         </li>
+
       </ul>
+
+      <!-- Exibe o perfil do usuário logado -->
+      <span sec:authorize="isAuthenticated()" class="navbar-text text-light mr-3">
+        Olá, <strong sec:authentication="name"></strong>
+        <span sec:authorize="hasAuthority('ROLE_ADMIN')" class="badge badge-danger ml-1">Admin</span>
+        <span sec:authorize="hasAuthority('ROLE_GERENTE')" class="badge badge-warning ml-1">Gerente</span>
+        <span sec:authorize="hasAuthority('ROLE_USER')" class="badge badge-secondary ml-1">Usuário</span>
+      </span>
+
       <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-outline-light mr-2">Entrar</a>
       <a sec:authorize="isAnonymous()" th:href="@{/register}" class="btn btn-light mr-2">Criar conta</a>
       <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">

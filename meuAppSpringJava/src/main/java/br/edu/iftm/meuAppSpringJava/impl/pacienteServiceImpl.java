@@ -24,18 +24,13 @@ public class pacienteServiceImpl implements pacienteService {
     }
 
     @Override
-    public void savePaciente(Paciente paciente){
-        this.pacienteRepository.save(paciente);
+    public Paciente savePaciente(Paciente paciente){
+        return this.pacienteRepository.save(paciente);
     }
 
     @Override
-    public Paciente getPacienteById(long id) {
-        Optional < Paciente > optional = pacienteRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new RuntimeException("Paciente not found with id: " + id);
-        }
+    public Optional<Paciente> getPacienteById(long id) {
+        return pacienteRepository.findById(id);
     }
 
     @Override
@@ -44,4 +39,3 @@ public class pacienteServiceImpl implements pacienteService {
     }
 
 }
-
