@@ -3,7 +3,9 @@ package com.devWebResolv.mannagerSystem.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -40,6 +42,9 @@ public class Projeto implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "tecnologia_id")
     )
     private Set<Tecnologia> tecnologias = new HashSet<>();
+
+    @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tarefa> tarefas = new ArrayList<>();
 
     public Projeto() {
     }
@@ -125,6 +130,24 @@ public class Projeto implements Serializable {
     public void removerTecnologia(Tecnologia tecnologia) {
         this.tecnologias.remove(tecnologia);
         tecnologia.getProjetos().remove(this);
+    }
+
+    public List<Tarefa> getTarefas() {
+        return tarefas;
+    }
+
+    public void setTarefas(List<Tarefa> tarefas) {
+        this.tarefas = tarefas;
+    }
+
+    public void adicionarTarefa(Tarefa tarefa) {
+        this.tarefas.add(tarefa);
+        tarefa.setProjeto(this);
+    }
+
+    public void removerTarefa(Tarefa tarefa) {
+        this.tarefas.remove(tarefa);
+        tarefa.setProjeto(null);
     }
 
     @Override
