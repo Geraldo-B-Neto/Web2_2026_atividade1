@@ -3,7 +3,9 @@ package com.devWebResolv.mannagerSystem.model;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "projetos")
@@ -25,17 +27,23 @@ public class Projeto implements Serializable {
     @Column(nullable = false, length = 30)
     private StatusProjeto status;
 
-    @Column(precision = 10, scale = 2)
+    @Column
     private Double orcamento;
 
     @Column(name = "data_previsao_entrega")
     private LocalDate dataPrevisaoEntrega;
 
-    // Construtor padrão exigido pelo JPA
+    @ManyToMany
+    @JoinTable(
+        name = "projeto_tecnologia",
+        joinColumns = @JoinColumn(name = "projeto_id"),
+        inverseJoinColumns = @JoinColumn(name = "tecnologia_id")
+    )
+    private Set<Tecnologia> tecnologias = new HashSet<>();
+
     public Projeto() {
     }
 
-    // Construtor completo
     public Projeto(Long id, String titulo, String descricao, StatusProjeto status, Double orcamento, LocalDate dataPrevisaoEntrega) {
         this.id = id;
         this.titulo = titulo;
@@ -45,7 +53,6 @@ public class Projeto implements Serializable {
         this.dataPrevisaoEntrega = dataPrevisaoEntrega;
     }
 
-    // Construtor auxiliar sem ID (para criação de novos registros)
     public Projeto(String titulo, String descricao, StatusProjeto status, Double orcamento, LocalDate dataPrevisaoEntrega) {
         this.titulo = titulo;
         this.descricao = descricao;
@@ -53,8 +60,6 @@ public class Projeto implements Serializable {
         this.orcamento = orcamento;
         this.dataPrevisaoEntrega = dataPrevisaoEntrega;
     }
-
-    // Getters e Setters
 
     public Long getId() {
         return id;
@@ -102,6 +107,24 @@ public class Projeto implements Serializable {
 
     public void setDataPrevisaoEntrega(LocalDate dataPrevisaoEntrega) {
         this.dataPrevisaoEntrega = dataPrevisaoEntrega;
+    }
+
+    public Set<Tecnologia> getTecnologias() {
+        return tecnologias;
+    }
+
+    public void setTecnologias(Set<Tecnologia> tecnologias) {
+        this.tecnologias = tecnologias;
+    }
+
+    public void adicionarTecnologia(Tecnologia tecnologia) {
+        this.tecnologias.add(tecnologia);
+        tecnologia.getProjetos().add(this);
+    }
+
+    public void removerTecnologia(Tecnologia tecnologia) {
+        this.tecnologias.remove(tecnologia);
+        tecnologia.getProjetos().remove(this);
     }
 
     @Override

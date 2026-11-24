@@ -1,8 +1,11 @@
 package com.devWebResolv.mannagerSystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tecnologias")
@@ -19,6 +22,10 @@ public class Tecnologia implements Serializable {
 
     @Column(length = 100)
     private String categoria;
+
+    @ManyToMany(mappedBy = "tecnologias")
+    @JsonIgnore
+    private Set<Projeto> projetos = new HashSet<>();
 
     public Tecnologia() {
     }
@@ -56,6 +63,14 @@ public class Tecnologia implements Serializable {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    public Set<Projeto> getProjetos() {
+        return projetos;
+    }
+
+    public void setProjetos(Set<Projeto> projetos) {
+        this.projetos = projetos;
     }
 
     @Override
