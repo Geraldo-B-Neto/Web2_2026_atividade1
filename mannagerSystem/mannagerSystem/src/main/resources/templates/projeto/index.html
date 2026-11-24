@@ -82,6 +82,7 @@
                                 <th scope="col" class="ps-4">ID</th>
                                 <th scope="col">Título</th>
                                 <th scope="col">Descrição</th>
+                                <th scope="col">Tecnologias</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Orçamento</th>
                                 <th scope="col">Previsão Entrega</th>
@@ -99,6 +100,14 @@
                                           th:title="${p.descricao}" 
                                           th:text="${p.descricao != null && !p.descricao.isEmpty() ? p.descricao : '-'}">
                                     </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1" style="max-width: 220px;">
+                                        <span th:each="t : ${p.tecnologias}" 
+                                              class="badge bg-light text-dark border shadow-sm px-2 py-1" 
+                                              th:text="${t.nome}">Java</span>
+                                        <span th:if="${#sets.isEmpty(p.tecnologias)}" class="text-muted small">-</span>
+                                    </div>
                                 </td>
                                 <td>
                                     <span th:classappend="${
@@ -140,7 +149,7 @@
                             </tr>
 
                             <tr th:if="${#lists.isEmpty(projetos)}">
-                                <td colspan="7" class="text-center py-5 text-muted">
+                                <td colspan="8" class="text-center py-5 text-muted">
                                     <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
                                     Nenhum projeto cadastrado até o momento.
                                     <div class="mt-2">

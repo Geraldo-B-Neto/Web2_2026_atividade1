@@ -113,6 +113,34 @@
                                 <input type="date" class="form-control" id="dataPrevisaoEntrega" th:field="*{dataPrevisaoEntrega}" />
                             </div>
 
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold d-block">
+                                    <i class="bi bi-cpu me-1 text-primary"></i>Tecnologias Utilizadas
+                                </label>
+                                <div th:if="${#lists.isEmpty(todasTecnologias)}" class="alert alert-light border small text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>Nenhuma tecnologia cadastrada ainda. 
+                                    <a th:href="@{/tecnologias/novo}" target="_blank" class="alert-link">Cadastrar tecnologia</a>
+                                </div>
+                                <div th:if="${!#lists.isEmpty(todasTecnologias)}" class="p-3 bg-light rounded-3 border">
+                                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
+                                        <div class="col" th:each="tec : ${todasTecnologias}">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       th:field="*{tecnologias}" 
+                                                       th:value="${tec.id}" 
+                                                       th:id="${'tec_' + tec.id}" />
+                                                <label class="form-check-label user-select-none" th:for="${'tec_' + tec.id}">
+                                                    <strong th:text="${tec.nome}">Java</strong>
+                                                    <small th:if="${tec.categoria != null && !tec.categoria.isEmpty()}" 
+                                                           class="text-muted d-block" th:text="${tec.categoria}">Backend</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text">Selecione uma ou mais tecnologias utilizadas no desenvolvimento deste projeto.</div>
+                            </div>
+
                             <div class="d-flex justify-content-end gap-2 border-top pt-3">
                                 <a th:href="@{/projetos}" class="btn btn-outline-secondary">
                                     <i class="bi bi-x-circle me-1"></i>Cancelar
